@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Speech to Text</title>
+</head>
+<body>
+  <h1>Speech to Text using Mozilla Web Speech API</h1>
+  <button id="start">Start Recognition</button>
+  <p id="result"></p>
+
+  <script>
+    // Check if the browser supports the Web Speech API
+    if (!('webkitSpeechRecognition' in window)) {
+      alert('Your browser does not support the Web Speech API. Please try Google Chrome.');
+    } else {
+      const recognition = new webkitSpeechRecognition();
+      const startButton = document.getElementById('start');
+      const resultElement = document.getElementById('result');
+
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = 'en-US';
+
+      recognition.onresult = function(event) {
+        let finalTranscript = '';
+        let interimTranscript = '';
+
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            finalTranscript += event.results[i][0].transcript;
+          } else {
+            interimTranscript += event.results[i][0].transcript;
+          }
+        }
+
+        resultElement.textContent = finalTranscript + interimTranscript;
+      };
+
+      recognition.onerror = function(event) {
+        console.error(event.error);
+      };
+
+      startButton.addEventListener('click', () => {
+        recognition.start();
+      });
+    }
+  </script>
+</body>
+</html>
