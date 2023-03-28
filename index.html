@@ -6,16 +6,18 @@
   <title>Speech to Text</title>
 </head>
 <body>
-  <h1>Speech to Text using Mozilla Web Speech API</h1>
+  <h1>Speech to Text using Web Speech API</h1>
   <button id="start">Start Recognition</button>
   <p id="result"></p>
 
   <script>
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
     // Check if the browser supports the Web Speech API
-    if (!('webkitSpeechRecognition' in window)) {
-      alert('Your browser does not support the Web Speech API. Please try Google Chrome.');
+    if (!SpeechRecognition) {
+      alert('Your browser does not support the Web Speech API. Please try Google Chrome or Microsoft Edge.');
     } else {
-      const recognition = new webkitSpeechRecognition();
+      const recognition = new SpeechRecognition();
       const startButton = document.getElementById('start');
       const resultElement = document.getElementById('result');
 
