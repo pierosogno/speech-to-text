@@ -8,17 +8,18 @@
 <body>
   <h1>Speech to Text using Web Speech API</h1>
   <button id="start">Start Recognition</button>
-  <p id="result"></p>
+  <button id="stop" disabled>Stop Recognition</button>
+  <div id="result"></div>
 
   <script>
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
     // Check if the browser supports the Web Speech API
-    if (!SpeechRecognition) {
+    if (!('SpeechRecognition' in window) && !('webkitSpeechRecognition' in window)) {
       alert('Your browser does not support the Web Speech API. Please try Google Chrome or Microsoft Edge.');
     } else {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       const recognition = new SpeechRecognition();
       const startButton = document.getElementById('start');
+      const stopButton = document.getElementById('stop');
       const resultElement = document.getElementById('result');
 
       recognition.continuous = true;
@@ -26,18 +27,17 @@
       recognition.lang = 'en-US';
 
       recognition.onresult = function(event) {
-        let finalTranscript = '';
         let interimTranscript = '';
 
         for (let i = event.resultIndex; i < event.results.length; ++i) {
           if (event.results[i].isFinal) {
-            finalTranscript += event.results[i][0].transcript;
+            const p = document.createElement('p');
+            p.textContent = event.results[i][0].transcript;
+            resultElement.appendChild(p);
           } else {
             interimTranscript += event.results[i][0].transcript;
           }
         }
-
-        resultElement.textContent = finalTranscript + interimTranscript;
       };
 
       recognition.onerror = function(event) {
@@ -46,8 +46,17 @@
 
       startButton.addEventListener('click', () => {
         recognition.start();
+        startButton.disabled = true;
+        stopButton.disabled = false;
+      });
+
+      stopButton.addEventListener('click', () => {
+        recognition.stop();
+        startButton.disabled = false;
+        stopButton.disabled = true;
       });
     }
   </script>
 </body>
 </html>
+
